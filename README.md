@@ -1,120 +1,116 @@
-# ⚙️ Previsão de Qualidade de Soldas em Aços com Machine Learning
+# ⚙️ Steel Weld Quality Prediction using Machine Learning
 
-Projeto desenvolvido no âmbito da disciplina **Apprentissage Automatique (3IF3010)**, com o objetivo de analisar, modelar e inferir padrões determinantes na qualidade de soldas em aços utilizando abordagens de **Aprendizado de Máquina Supervisionado e Semi-Supervisionado**.
-
----
-
-## 📌 Contexto e Motivação
-
-A integridade e a qualidade de juntas soldadas são fatores críticos em indústrias pesadas e de energia renovável (como a fabricação e soldagem de tubos para turbinas eólicas e estruturas offshore), envolvendo investimentos bilionários. Tradicionalmente, grande parte do conhecimento metalúrgico e do controle de qualidade depende da experiência empírica de especialistas ou de ensaios mecânicos destrutivos laboratoriais dispendiosos.
-
-Este projeto aplica técnicas de Ciência de Dados e Machine Learning sobre a **Weld Database** para prever propriedades mecânicas e a qualidade da solda a partir de parâmetros de composição química e variáveis térmicas de processo.
+Project developed as part of the **Machine Learning (3IF3010)** course, aiming to analyze, model, and infer patterns determining steel weld quality using **Supervised and Semi-Supervised Machine Learning** approaches.
 
 ---
 
-## 🗂️ Estrutura do Repositório
+## 📌 Context and Motivation
+
+The integrity and quality of welded joints are critical factors in heavy industry and renewable energy sectors (such as the manufacturing and welding of pipes for wind turbines and offshore structures), involving multi-billion dollar investments. Traditionally, much of the metallurgical knowledge and quality control relies on the empirical experience of experts or costly destructive laboratory mechanical tests.
+
+This project applies Data Science and Machine Learning techniques to the **Weld Database** to predict mechanical properties and weld quality based on chemical composition parameters and thermal process variables.
+
+---
+
+## 🗂️ Repository Structure
 
 ```plaintext
 ml_base/
 ├── data/
-│   └── welddb.data         # Dataset bruto com dados de soldagem (Weld Database)
-├── ML_Project.ipynb        # Jupyter Notebook com pipeline completo de ML e análises
-├── requirements.txt        # Dependências e bibliotecas Python do projeto
-└── README.md               # Documentação do projeto
+│   └── welddb.data         # Raw dataset containing welding data (Weld Database)
+├── ML_Project.ipynb        # Jupyter Notebook with the complete ML pipeline and analyses
+├── requirements.txt        # Project dependencies and Python libraries
+└── README.md               # Project documentation
 ```
 
 ---
 
-## 🔬 Pipeline do Projeto
+## 🔬 Project Pipeline
 
-O estudo no notebook [`ML_Project.ipynb`](file:///root/mentionIA/ml_base/ML_Project.ipynb) está estruturado nas seguintes etapas:
+The study in the [`ML_Project.ipynb`](file:///root/mentionIA/ml_base/ML_Project.ipynb) notebook is structured into the following stages:
 
-### 1. Limpeza e Tratamento de Dados
-- Mapeamento e renomeação de mais de 40 atributos metalúrgicos, operacionais e microestruturais.
-- Tratamento de caracteres especiais e valores ausentes (`'N'` $\to$ `NaN`).
-- Conversão de tipos de dados para formatos numéricos e descarte de variáveis com alta taxa de dados faltantes (> 50%).
+### 1. Data Cleaning and Preprocessing
+- Mapping and renaming of over 40 metallurgical, operational, and microstructural attributes.
+- Handling of special characters and missing values ​​(`'N'` $\to$ `NaN`). - Conversion of data types to numerical formats and discarding of variables with a high rate of missing data (> 50%).
 
-### 2. Análise Exploratória e Pré-processamento
-- Análise estatística descritiva dos parâmetros do processo.
-- **Padronização (Z-Score / `StandardScaler`)**: Necessária devido à grande disparidade de grandezas e ordens de magnitude físicas (ex.: composições químicas em `%` ou `ppm`, corrente em `A`, tensão em `V`, calor de entrada em `kJ/mm` e temperaturas em `°C`).
+### 2. Exploratory Analysis and Preprocessing
+- Descriptive statistical analysis of process parameters.
+- **Standardization (Z-Score / `StandardScaler`)**: Necessary due to the wide disparity in physical quantities and orders of magnitude (e.g., chemical compositions in `%` or `ppm`, current in `A`, voltage in `V`, heat input in `kJ/mm`, and temperatures in `°C`).
 
-### 3. Redução de Dimensionalidade (PCA)
-- Aplicação de **Análise de Componentes Principais (PCA)** para avaliar a variância cumulativa e a dimensionalidade intrínseca dos dados de soldagem, identificando o número de componentes necessários para representar $\ge 90\%$ da variância total.
+### 3. Dimensionality Reduction (PCA)
+- Application of **Principal Component Analysis (PCA)** to evaluate cumulative variance and the intrinsic dimensionality of the welding data, identifying the number of components required to represent $\ge 90\%$ of the total variance.
 
-### 4. Aprendizado Supervisionado (Regressão)
-- **Modelos**: *Random Forest Regressor* e *XGBoost Regressor*.
-- **Alvo**: Temperatura de transição de impacto Charpy (`Charpy_temp_C`).
-- **Validação**: Protocolo rigoroso de validação cruzada $K$-Fold ($K=5$).
-- **Métricas**: Coeficiente de Determinação ($R^2$) e Raiz do Erro Quadrático Médio (RMSE).
+### 4. Supervised Learning (Regression)
+- **Models**: *Random Forest Regressor* and *XGBoost Regressor*.
+- **Target**: Charpy impact transition temperature (`Charpy_temp_C`).
+- **Validation**: Rigorous $K$-Fold cross-validation protocol ($K=5$).
+- **Metrics**: Coefficient of Determination ($R^2$) and Root Mean Square Error (RMSE).
 
-### 5. Aprendizado Semi-Supervisionado (Classificação)
-- **Motivação**: Simular cenários industriais onde testes laboratoriais rotulados são escassos, enquanto dados brutos de sensores de processo (não rotulados) são abundantes.
-- **Abordagem**: Binarização do alvo em classes de qualidade (*Alta Qualidade* vs *Baixa Qualidade*) e aplicação do algoritmo **Self-Training** (`SelfTrainingClassifier` com *Random Forest* como estimador base e pseudo-rotulagem iterativa baseada em limiar de confiança).
-- **Métricas**: Acurácia, Precisão, Recall e F1-Score.
+### 5. Semi-Supervised Learning (Classification)
+- **Motivation**: To simulate industrial scenarios where labeled laboratory tests are scarce, while raw process sensor data (unlabeled) is abundant.
+- **Approach**: Binarization of the target into quality classes (*High Quality* vs. *Low Quality*) and application of the **Self-Training** algorithm (`SelfTrainingClassifier` using *Random Forest* as the base estimator and iterative pseudo-labeling based on a confidence threshold). - **Metrics**: Accuracy, Precision, Recall, and F1-Score.
 
-### 6. Importância de Variáveis e Conclusões Metalúrgicas
-- Extração do ranking de importância das variáveis (*Feature Importances*).
-- Insights metalúrgicos principais:
-  - **Composição Química**: Elementos como Carbono (`Carbon_C`) e Manganês (`Manganese_Mn`) influenciam fortemente a formação de fases microestruturais (martensita vs. bainita), determinando a tenacidade ao impacto.
-  - **Parâmetros Térmicos**: Equilíbrio estrito entre aporte térmico (`Heat_input_kJ_mm`) e corrente (`Current_A`), evitando o alargamento excessivo da Zona Afetada pelo Calor (ZAC/HAZ).
+### 6. Variable Importance and Metallurgical Conclusions
+- Extraction of variable importance rankings (*Feature Importances*).
+- Key metallurgical insights:
+- **Chemical Composition**: Elements such as Carbon (`Carbon_C`) and Manganese (`Manganese_Mn`) strongly influence the formation of microstructural phases (martensite vs. bainite), thereby determining impact toughness. 
+- **Thermal Parameters**: A precise balance between heat input (`Heat_input_kJ_mm`) and current (`Current_A`) is required to avoid excessive widening of the Heat-Affected Zone (HAZ).
 
 ---
 
-## 📊 Principais Resultados
+## 📊 Key Results
 
-| Abordagem | Modelo / Algoritmo | Métrica Principal | Desempenho |
+| Approach | Model / Algorithm | Primary Metric | Performance |
 | :--- | :--- | :--- | :--- |
-| **Supervisionado (Regressão)** | Random Forest Regressor | $R^2$ / RMSE | $R^2 \approx 0.78$ \| $\text{RMSE} \approx 13.59$ |
-| **Supervisionado (Regressão)** | XGBoost Regressor | $R^2$ / RMSE | $R^2 \approx 0.79$ \| $\text{RMSE} \approx 13.20$ |
-| **Semi-Supervisionado** | Self-Training (Random Forest) | Acurácia / F1-Score | Acurácia $\approx 76\%$ \| F1-Score $\approx 0.76$ |
+| **Supervised (Regression)** | Random Forest Regressor | $R^2$ / RMSE | $R^2 \approx 0.78$ \| $\text{RMSE} \approx 13.59$ |
+| **Supervised (Regression)** | XGBoost Regressor | $R^2$ / RMSE | $R^2 \approx 0.79$ \| $\text{RMSE} \approx 13.20$ |
+| **Semi-Supervised** | Self-Training (Random Forest) | Accuracy / F1-Score | Accuracy $\approx 76\%$ \| F1-Score $\approx 0.76$ | ---
+
+## 🚀 How to Run the Project
+
+### Prerequisites
+- Python 3.10 or higher
+- `pip` package manager
+- Virtual environment (`venv` recommended)
+
+### Step-by-Step
+
+1. **Clone the repository:**
+```bash
+git clone <REPOSITORY_URL>
+cd ml_base
+```
+
+2. **Create and activate a virtual environment:**
+```bash
+python3 -m venv .venv
+source .venv/bin/activate # Linux / macOS
+# On Windows: .venv\Scripts\activate
+```
+
+3. **Install dependencies:**
+```bash
+pip install -r requirements.txt
+```
+
+4. **Launch Jupyter Notebook / JupyterLab:**
+```bash
+jupyter notebook ML_Project.ipynb
+```
+*Or open the file directly in your preferred editor (such as VS Code or PyCharm with the Jupyter extension).*
 
 ---
 
-## 🚀 Como Executar o Projeto
-
-### Pré-requisitos
-- Python 3.10 ou superior
-- Gerenciador de pacotes `pip`
-- Ambiente virtual (`venv` recomendado)
-
-### Passo a Passo
-
-1. **Clone o repositório:**
-   ```bash
-   git clone <URL_DO_REPOSITORIO>
-   cd ml_base
-   ```
-
-2. **Crie e ative um ambiente virtual:**
-   ```bash
-   python3 -m venv .venv
-   source .venv/bin/activate  # Linux / macOS
-   # No Windows: .venv\Scripts\activate
-   ```
-
-3. **Instale as dependências:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Inicie o Jupyter Notebook / JupyterLab:**
-   ```bash
-   jupyter notebook ML_Project.ipynb
-   ```
-   *Ou abra o arquivo diretamente em seu editor de preferência (como VS Code ou PyCharm com extensão Jupyter).*
-
----
-
-## 📦 Principais Tecnologias e Bibliotecas
+## 📦 Key Technologies and Libraries
 
 - [Python 3](https://www.python.org/)
-- [Pandas](https://pandas.pydata.org/) & [NumPy](https://numpy.org/) — Manipulação e pré-processamento de dados
-- [Scikit-Learn](https://scikit-learn.org/) — Padronização, PCA, validação cruzada, modelos de Machine Learning e Self-Training
-- [XGBoost](https://xgboost.readthedocs.io/) — Algoritmos de Gradient Boosting
-- [Matplotlib](https://matplotlib.org/) & [Seaborn](https://seaborn.pydata.org/) — Visualização de dados e gráficos de importância de features
+- [Pandas](https://pandas.pydata.org/) & [NumPy](https://numpy.org/) — Data manipulation and preprocessing
+- [Scikit-Learn](https://scikit-learn.org/) — Standardization, PCA, cross-validation, Machine Learning models, and Self-Training
+- [XGBoost](https://xgboost.readthedocs.io/) — Gradient Boosting algorithms
+- [Matplotlib](https://matplotlib.org/) & [Seaborn](https://seaborn.pydata.org/) — Data visualization and feature importance plots
 
 ---
 
-## 📄 Licença
+## 📄 License
 
-Este projeto é desenvolvido para fins acadêmicos e de pesquisa no contexto do curso de Machine Learning / *Apprentissage Automatique*.
+This project was developed for academic and research purposes within the context of the Machine Learning course.
