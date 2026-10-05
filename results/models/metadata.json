@@ -1,0 +1,62 @@
+{
+  "yield_strength": {
+    "model": "SVR RBF",
+    "params": {
+      "C": 100,
+      "epsilon": 0.1,
+      "gamma": 0.01
+    },
+    "inner_MAE": 26.877756056616914,
+    "note": "Modèle réentraîné sur tous les labels; pas de nouveau score de test."
+  },
+  "tensile_strength": {
+    "model": "SVR RBF",
+    "params": {
+      "C": 100,
+      "epsilon": 0.1,
+      "gamma": 0.01
+    },
+    "inner_MAE": 21.3345370424922,
+    "note": "Modèle réentraîné sur tous les labels; pas de nouveau score de test."
+  },
+  "elongation": {
+    "model": "SVR RBF",
+    "params": {
+      "C": 10,
+      "epsilon": 0.1,
+      "gamma": "scale"
+    },
+    "inner_MAE": 1.938890033266934,
+    "note": "Modèle réentraîné sur tous les labels; pas de nouveau score de test."
+  },
+  "reduction_area": {
+    "model": "SVR RBF",
+    "params": {
+      "C": 10,
+      "epsilon": 0.1,
+      "gamma": 0.01
+    },
+    "inner_MAE": 2.661835664912097,
+    "note": "Modèle réentraîné sur tous les labels; pas de nouveau score de test."
+  },
+  "charpy_energy": {
+    "model": "Forêt",
+    "params": {
+      "max_depth": null,
+      "min_samples_leaf": 1,
+      "max_features": 0.7
+    },
+    "inner_MAE": 18.05783119571303,
+    "note": "Modèle réentraîné sur tous les labels; pas de nouveau score de test."
+  },
+  "temperature_100J": {
+    "model": "SVR RBF",
+    "params": {
+      "C": 10,
+      "epsilon": 0.1,
+      "gamma": "scale"
+    },
+    "inner_MAE": 11.901609173263793,
+    "note": "Modèle réentraîné sur tous les labels; pas de nouveau score de test."
+  }
+}

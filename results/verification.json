@@ -1,0 +1,15 @@
+{
+  "base_commit": "8b8c1928ceae0b0f4494484907e64a6f49d94dc7",
+  "targets": 6,
+  "models": 9,
+  "outer_folds": 5,
+  "inner_folds": 3,
+  "outer_evaluations": 270,
+  "hyperparameter_trials": 1140,
+  "out_of_fold_predictions": 37422,
+  "outer_group_exclusion_verified": true,
+  "oof_scores_recomputed": true,
+  "protocol_tests_passed": 6,
+  "self_training_fits_with_real_U_and_pseudo_labels": 15,
+  "notebook_cells_executed": 8
+}

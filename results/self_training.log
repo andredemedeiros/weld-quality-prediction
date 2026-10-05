@@ -1,0 +1,8 @@
+                                           accuracy  balanced_accuracy     F1  n_pseudo_labels_added
+fraction_labelled_groups model                                                                      
+0.25                     RF self-training     0.666              0.668  0.671                  552.2
+                         RF supervised        0.677              0.678  0.690                    0.0
+0.50                     RF self-training     0.719              0.726  0.732                  401.0
+                         RF supervised        0.713              0.717  0.724                    0.0
+1.00                     RF self-training     0.753              0.753  0.747                  555.4
+                         RF supervised        0.772              0.773  0.770                    0.0

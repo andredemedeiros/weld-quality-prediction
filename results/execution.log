@@ -1,0 +1,111 @@
+yield_strength     | Moyenne        | 0.4 s
+yield_strength     | Ridge          | 1.3 s
+yield_strength     | kNN            | 1.1 s
+yield_strength     | SVR RBF        | 2.8 s
+yield_strength     | Arbre          | 2.1 s
+yield_strength     | Forêt          | 33.9 s
+yield_strength     | XGBoost        | 4.0 s
+yield_strength     | RFF supervisé  | 1.7 s
+yield_strength     | RFF graphe     | 4.8 s
+tensile_strength   | Moyenne        | 0.4 s
+tensile_strength   | Ridge          | 1.3 s
+tensile_strength   | kNN            | 1.2 s
+tensile_strength   | SVR RBF        | 3.1 s
+tensile_strength   | Arbre          | 2.1 s
+tensile_strength   | Forêt          | 15.9 s
+tensile_strength   | XGBoost        | 3.5 s
+tensile_strength   | RFF supervisé  | 1.3 s
+tensile_strength   | RFF graphe     | 4.5 s
+elongation         | Moyenne        | 0.5 s
+elongation         | Ridge          | 1.5 s
+elongation         | kNN            | 1.0 s
+elongation         | SVR RBF        | 2.7 s
+elongation         | Arbre          | 1.9 s
+elongation         | Forêt          | 16.4 s
+elongation         | XGBoost        | 3.9 s
+elongation         | RFF supervisé  | 1.8 s
+elongation         | RFF graphe     | 5.2 s
+reduction_area     | Moyenne        | 0.5 s
+reduction_area     | Ridge          | 1.4 s
+reduction_area     | kNN            | 1.1 s
+reduction_area     | SVR RBF        | 2.7 s
+reduction_area     | Arbre          | 2.3 s
+reduction_area     | Forêt          | 15.2 s
+reduction_area     | XGBoost        | 3.3 s
+reduction_area     | RFF supervisé  | 1.3 s
+reduction_area     | RFF graphe     | 4.5 s
+charpy_energy      | Moyenne        | 0.4 s
+charpy_energy      | Ridge          | 1.3 s
+charpy_energy      | kNN            | 1.4 s
+charpy_energy      | SVR RBF        | 2.8 s
+charpy_energy      | Arbre          | 1.9 s
+charpy_energy      | Forêt          | 28.9 s
+charpy_energy      | XGBoost        | 2.9 s
+charpy_energy      | RFF supervisé  | 1.3 s
+charpy_energy      | RFF graphe     | 3.5 s
+temperature_100J   | Moyenne        | 0.4 s
+temperature_100J   | Ridge          | 1.3 s
+temperature_100J   | kNN            | 0.9 s
+temperature_100J   | SVR RBF        | 1.5 s
+temperature_100J   | Arbre          | 1.7 s
+temperature_100J   | Forêt          | 11.2 s
+temperature_100J   | XGBoost        | 2.3 s
+temperature_100J   | RFF supervisé  | 1.2 s
+temperature_100J   | RFF graphe     | 5.2 s
+Sensibilités terminées
+Expérience de masquage terminée
+          target         model  MAE_mean   MAE_sd  RMSE_mean   RMSE_sd   R2_mean    R2_sd  MAE_pooled  RMSE_pooled  R2_pooled
+   charpy_energy         Forêt 18.259590 4.320275  29.071285  6.898520  0.650753 0.144426   18.263667    29.724874   0.647816
+   charpy_energy       XGBoost 19.092600 2.851703  29.170741  4.291748  0.654330 0.081197   19.095862    29.427494   0.654828
+   charpy_energy           kNN 22.341089 4.207312  34.530333  7.001122  0.512483 0.155606   22.345269    35.102079   0.508872
+   charpy_energy         Arbre 22.799026 2.448316  38.972895  4.555689  0.384439 0.113805   22.798421    39.187993   0.387882
+   charpy_energy       SVR RBF 22.973984 2.871051  33.237698  5.608575  0.548682 0.120219   22.978449    33.622920   0.549391
+   charpy_energy RFF supervisé 26.424624 2.551000  33.661532  2.841124  0.538886 0.082995   26.426647    33.760716   0.545690
+   charpy_energy    RFF graphe 26.492125 2.574324  33.738687  2.849762  0.536769 0.083322   26.494121    33.838202   0.543602
+   charpy_energy         Ridge 32.366790 8.036491  49.528671 27.845633 -0.263836 1.583424   32.351620    55.369386  -0.221993
+   charpy_energy       Moyenne 38.926471 2.170904  50.179585  2.543373 -0.015750 0.019779   38.927568    50.232615  -0.005775
+      elongation       SVR RBF  1.883425 0.141063   2.691319  0.245723  0.694351 0.037593    1.883425     2.700278   0.695381
+      elongation         Forêt  1.946493 0.161269   2.664769  0.231329  0.699984 0.038536    1.946493     2.672789   0.701551
+      elongation       XGBoost  1.968506 0.167645   2.696629  0.258954  0.693664 0.034814    1.968506     2.706558   0.693962
+      elongation           kNN  2.177208 0.216053   2.944896  0.395510  0.634340 0.065015    2.177208     2.966067   0.632462
+      elongation         Ridge  2.346591 0.243106   3.183653  0.389198  0.573678 0.061983    2.346591     3.202628   0.571497
+      elongation RFF supervisé  2.585268 0.213375   3.327958  0.261653  0.532760 0.048134    2.585268     3.336176   0.535016
+      elongation    RFF graphe  2.586440 0.214180   3.328122  0.262402  0.532797 0.047204    2.586440     3.336387   0.534957
+      elongation         Arbre  2.733676 0.398932   3.624629  0.583881  0.444580 0.133538    2.733676     3.662058   0.439738
+      elongation       Moyenne  4.046608 0.290944   4.895780  0.247090 -0.009822 0.016193    4.046608     4.900766  -0.003387
+  reduction_area       SVR RBF  2.489032 0.527241   4.596043  1.306870  0.726364 0.052362    2.489032     4.742356   0.717358
+  reduction_area         Forêt  2.640072 0.592326   4.689543  1.600529  0.715817 0.087675    2.640072     4.903180   0.697862
+  reduction_area       XGBoost  2.757280 0.456749   4.826369  1.363970  0.697596 0.061241    2.757280     4.978169   0.688550
+  reduction_area           kNN  2.770460 0.521535   4.881701  1.430801  0.690746 0.066849    2.770460     5.046658   0.679921
+  reduction_area         Ridge  3.156652 0.543438   4.872075  1.343096  0.689949 0.067829    3.156652     5.017991   0.683547
+  reduction_area RFF supervisé  3.517689 0.695232   5.509342  1.555502  0.605018 0.089209    3.517689     5.682298   0.594214
+  reduction_area    RFF graphe  3.529946 0.681205   5.580554  1.459975  0.594568 0.071177    3.529946     5.731300   0.587185
+  reduction_area         Arbre  3.582858 0.681635   6.203527  1.622304  0.491087 0.126590    3.582858     6.370969   0.489894
+  reduction_area       Moyenne  6.745477 0.920801   8.828839  1.786215 -0.024547 0.030284    6.745477     8.972226  -0.011695
+temperature_100J       SVR RBF 12.288628 1.840803  18.432688  2.908051  0.477543 0.120003   12.287581    18.617065   0.484170
+temperature_100J         Forêt 12.549186 2.434899  18.469869  3.606277  0.476350 0.142176   12.545136    18.749923   0.476781
+temperature_100J       XGBoost 12.979059 1.646061  18.812857  3.072333  0.453397 0.147319   12.980720    19.015668   0.461845
+temperature_100J           kNN 13.429159 1.895956  19.318523  2.477548  0.427128 0.102899   13.425192    19.446060   0.437208
+temperature_100J    RFF graphe 14.691240 2.517347  19.666505  3.400390  0.409746 0.119710   14.688952    19.900565   0.410593
+temperature_100J RFF supervisé 14.710382 2.500039  19.713158  3.404233  0.405203 0.131830   14.708763    19.948193   0.407768
+temperature_100J         Arbre 15.448158 2.532991  21.450813  4.020304  0.279458 0.273681   15.449898    21.760576   0.295266
+temperature_100J         Ridge 15.902413 3.058213  20.931496  4.004551  0.326039 0.189680   15.901264    21.238393   0.328683
+temperature_100J       Moyenne 19.709463 2.500576  25.782124  3.458333 -0.008264 0.005104   19.706601    25.959631  -0.002955
+tensile_strength       SVR RBF 20.082512 1.667850  31.518363  5.319138  0.869781 0.031823   20.079504    31.864219   0.870589
+tensile_strength       XGBoost 23.844131 1.930649  35.178503  6.306145  0.840288 0.026070   23.840034    35.615657   0.838323
+tensile_strength         Forêt 27.504843 3.215707  39.309963  8.080286  0.798007 0.055588   27.498168    39.951048   0.796566
+tensile_strength           kNN 30.321438 2.876394  45.489614  8.838377  0.727631 0.081694   30.319835    46.156419   0.728462
+tensile_strength         Ridge 33.500113 1.881957  47.442021  7.120320  0.708321 0.041543   33.496667    47.852861   0.708135
+tensile_strength RFF supervisé 35.381578 3.552414  51.591746 11.125986  0.657157 0.075326   35.374240    52.519236   0.648437
+tensile_strength    RFF graphe 35.484536 3.537192  51.671818 11.051772  0.656086 0.074452   35.477203    52.585446   0.647550
+tensile_strength         Arbre 40.152745 2.108793  56.618181  3.595045  0.574207 0.097946   40.148547    56.703102   0.590193
+tensile_strength       Moyenne 70.157745 6.326325  88.274868  9.863198 -0.008580 0.008235   70.145199    88.695011  -0.002685
+  yield_strength       SVR RBF 26.502064 2.506467  42.511123  5.942626  0.784084 0.051698   26.502064    42.842122   0.786896
+  yield_strength       XGBoost 28.342260 3.358048  42.176666  8.351491  0.792381 0.046498   28.342260    42.833037   0.786987
+  yield_strength         Forêt 31.459085 3.074607  45.352988  8.695517  0.759065 0.055801   31.459085    46.015031   0.754162
+  yield_strength           kNN 36.316710 4.195529  53.218025  7.546318  0.669047 0.039461   36.316710    53.644345   0.665884
+  yield_strength RFF supervisé 43.060671 2.597715  58.856328  2.818550  0.590071 0.043321   43.060671    58.910294   0.597068
+  yield_strength    RFF graphe 43.112859 2.657312  58.891618  2.853567  0.589649 0.042688   43.112859    58.946900   0.596568
+  yield_strength         Ridge 45.142318 3.297201  64.026305  6.628573  0.515557 0.074351   45.142318    64.300218   0.519964
+  yield_strength         Arbre 45.500063 2.566125  61.899054  7.053635  0.551495 0.029405   45.500063    62.219739   0.550525
+  yield_strength       Moyenne 71.722881 6.932519  92.588394  8.379701 -0.005282 0.002810   71.722881    92.891260  -0.001840

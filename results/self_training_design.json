@@ -1,0 +1,11 @@
+{
+  "task": "temperature at an observed 100 J point, relative class",
+  "positive_class": "T <= training-visible-label median; not industrial quality",
+  "threshold_probability": 0.9,
+  "probability_calibrated": false,
+  "tuning": "fixed parameters; no outer test tuning",
+  "seed": 42,
+  "outer_folds": 5,
+  "split": "composition_group",
+  "note": "One masking draw per fold/fraction; exploratory, not repeated inference."
+}

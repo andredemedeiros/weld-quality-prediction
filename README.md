@@ -1,116 +1,118 @@
-# ⚙️ Steel Weld Quality Prediction using Machine Learning
+# Steel weld mechanical property prediction
 
-Project developed as part of the **Machine Learning (3IF3010)** course, aiming to analyze, model, and infer patterns determining steel weld quality using **Supervised and Semi-Supervised Machine Learning** approaches.
+Machine Learning project, CentraleSupélec, 2026–2027.
 
----
+**Review and methodological improvements: El Houssine KAMILI
+([@elhoussine-arise](https://github.com/elhoussine-arise)).** The original team
+work remains in Git history. This credit concerns the new improvements.
 
-## 📌 Context and Motivation
+This project predicts mechanical properties from composition and welding
+conditions. It compares supervised methods, graph regularized regression and
+a genuine self-training classification experiment. The database has no
+industrial pass/fail labels.
 
-The integrity and quality of welded joints are critical factors in heavy industry and renewable energy sectors (such as the manufacturing and welding of pipes for wind turbines and offshore structures), involving multi-billion dollar investments. Traditionally, much of the metallurgical knowledge and quality control relies on the empirical experience of experts or costly destructive laboratory mechanical tests.
+## Main corrections
 
-This project applies Data Science and Machine Learning techniques to the **Weld Database** to predict mechanical properties and weld quality based on chemical composition parameters and thermal process variables.
+The original notebook retained only 307 of 1,652 observations and supplied
+**zero unlabelled examples** to self-training. Its temperature target mixed
+Charpy points measured at different energies. See the
+[detailed review](docs/AUDIT_COMPARATIF.md) and [actual results](docs/RESULTS.md).
 
----
+- Explicit parsing of missing values, censored concentrations and intervals.
+- Imputation, standardization and categorical encoding learned within folds.
+- Five outer folds grouped by composition and three inner parameter-search folds.
+- Validation/test groups also excluded from unlabelled pools.
+- Mean, Ridge, kNN, SVR, decision tree, Random Forest, **XGBoost**, supervised
+  random Fourier features and graph regularized regression.
+- MAE, RMSE and R², out-of-fold predictions and split audit.
+- Genuine self-training vs supervised Random Forest on identical labels and tests,
+  with counts of actually added pseudo-labels.
+- Source-shift, censoring and Charpy-temperature sensitivity analyses.
 
-## 🗂️ Repository Structure
+## Targets
 
-```plaintext
-ml_base/
-├── data/
-│   └── welddb.data         # Raw dataset containing welding data (Weld Database)
-├── ML_Project.ipynb        # Jupyter Notebook with the complete ML pipeline and analyses
-├── requirements.txt        # Project dependencies and Python libraries
-└── README.md               # Project documentation
-```
+| Variable | Task | Observed labels |
+|---|---|---:|
+| `yield_strength` | Yield strength, MPa | 780 |
+| `tensile_strength` | Ultimate tensile strength, MPa | 738 |
+| `elongation` | Elongation, percentage points | 700 |
+| `reduction_area` | Reduction of area, percentage points | 705 |
+| `charpy_energy` | Impact energy at a **known test temperature**, J | 879 |
+| `temperature_100J` | Observed test temperature at a **100 J point**, °C | 356 |
 
----
+The 100 J task does not reconstruct a whole transition curve or identify a
+universal transition temperature. No median-based class is industrial quality.
+Self-training uses an illustrative relative class: temperature at 100 J at or
+below the median of **visible training labels**. Probability threshold 0.9 is
+fixed, not a calibrated confidence guarantee.
 
-## 🔬 Project Pipeline
+## Run
 
-The study in the [`ML_Project.ipynb`](file:///root/mentionIA/ml_base/ML_Project.ipynb) notebook is structured into the following stages:
+Python **3.12** is the environment used for the supplied results.
 
-### 1. Data Cleaning and Preprocessing
-- Mapping and renaming of over 40 metallurgical, operational, and microstructural attributes.
-- Handling of special characters and missing values ​​(`'N'` $\to$ `NaN`). - Conversion of data types to numerical formats and discarding of variables with a high rate of missing data (> 50%).
-
-### 2. Exploratory Analysis and Preprocessing
-- Descriptive statistical analysis of process parameters.
-- **Standardization (Z-Score / `StandardScaler`)**: Necessary due to the wide disparity in physical quantities and orders of magnitude (e.g., chemical compositions in `%` or `ppm`, current in `A`, voltage in `V`, heat input in `kJ/mm`, and temperatures in `°C`).
-
-### 3. Dimensionality Reduction (PCA)
-- Application of **Principal Component Analysis (PCA)** to evaluate cumulative variance and the intrinsic dimensionality of the welding data, identifying the number of components required to represent $\ge 90\%$ of the total variance.
-
-### 4. Supervised Learning (Regression)
-- **Models**: *Random Forest Regressor* and *XGBoost Regressor*.
-- **Target**: Charpy impact transition temperature (`Charpy_temp_C`).
-- **Validation**: Rigorous $K$-Fold cross-validation protocol ($K=5$).
-- **Metrics**: Coefficient of Determination ($R^2$) and Root Mean Square Error (RMSE).
-
-### 5. Semi-Supervised Learning (Classification)
-- **Motivation**: To simulate industrial scenarios where labeled laboratory tests are scarce, while raw process sensor data (unlabeled) is abundant.
-- **Approach**: Binarization of the target into quality classes (*High Quality* vs. *Low Quality*) and application of the **Self-Training** algorithm (`SelfTrainingClassifier` using *Random Forest* as the base estimator and iterative pseudo-labeling based on a confidence threshold). - **Metrics**: Accuracy, Precision, Recall, and F1-Score.
-
-### 6. Variable Importance and Metallurgical Conclusions
-- Extraction of variable importance rankings (*Feature Importances*).
-- Key metallurgical insights:
-- **Chemical Composition**: Elements such as Carbon (`Carbon_C`) and Manganese (`Manganese_Mn`) strongly influence the formation of microstructural phases (martensite vs. bainite), thereby determining impact toughness. 
-- **Thermal Parameters**: A precise balance between heat input (`Heat_input_kJ_mm`) and current (`Current_A`) is required to avoid excessive widening of the Heat-Affected Zone (HAZ).
-
----
-
-## 📊 Key Results
-
-| Approach | Model / Algorithm | Primary Metric | Performance |
-| :--- | :--- | :--- | :--- |
-| **Supervised (Regression)** | Random Forest Regressor | $R^2$ / RMSE | $R^2 \approx 0.78$ \| $\text{RMSE} \approx 13.59$ |
-| **Supervised (Regression)** | XGBoost Regressor | $R^2$ / RMSE | $R^2 \approx 0.79$ \| $\text{RMSE} \approx 13.20$ |
-| **Semi-Supervised** | Self-Training (Random Forest) | Accuracy / F1-Score | Accuracy $\approx 76\%$ \| F1-Score $\approx 0.76$ | ---
-
-## 🚀 How to Run the Project
-
-### Prerequisites
-- Python 3.10 or higher
-- `pip` package manager
-- Virtual environment (`venv` recommended)
-
-### Step-by-Step
-
-1. **Clone the repository:**
 ```bash
-git clone <REPOSITORY_URL>
-cd ml_base
+git clone https://github.com/andredemedeiros/weld-quality-prediction.git
+cd weld-quality-prediction
+git checkout elhoussine/validation-and-semi-supervised
+python -m venv .venv
+source .venv/bin/activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+python -m unittest discover -s tests -v
+python src/run.py --mode full
+python src/charpy_checks.py
+python src/self_training.py
 ```
 
-2. **Create and activate a virtual environment:**
+On Linux/macOS, `OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1` before each command
+avoids overhead. Open the notebook with:
+
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate # Linux / macOS
-# On Windows: .venv\Scripts\activate
+python -m pip install -r requirements-notebook.txt
+jupyter lab ML_Project.ipynb
 ```
 
-3. **Install dependencies:**
-```bash
-pip install -r requirements.txt
-```
+The notebook presents checked-in experiment outputs. The scripts execute the
+full study. `full` overwrites results; `quick` is only a smoke check.
 
-4. **Launch Jupyter Notebook / JupyterLab:**
-```bash
-jupyter notebook ML_Project.ipynb
-```
-*Or open the file directly in your preferred editor (such as VS Code or PyCharm with the Jupyter extension).*
+## Files
 
----
+| Path | Purpose |
+|---|---|
+| [ML_Project.ipynb](ML_Project.ipynb) | Reviewed notebook with computed outputs |
+| [docs/AUDIT_COMPARATIF.md](docs/AUDIT_COMPARATIF.md) | Original notebook audit and comparison with the previous study |
+| [docs/RESULTS.md](docs/RESULTS.md) | Executed experiment results |
+| `src/data.py` | Strict parsing, units and targets |
+| `src/models.py` | Fold-specific preprocessing and models |
+| `src/run.py` | Nested CV, PCA, interpretation and sensitivities |
+| `src/self_training.py` | Real self-training and supervised control |
+| `src/charpy_checks.py` | Charpy diagnostics |
+| `src/predict.py` | Prediction using recreated final models |
+| `tests/test_protocol.py` | Data and leakage checks |
+| `results/` | Metrics, search logs, verification and figures |
 
-## 📦 Key Technologies and Libraries
+Large out-of-fold files and fitted models are generated by `full` rather than
+committed. Summary CSVs and notebook outputs are supplied. To use a model, first
+run `full`, then `python src/predict.py INPUT.csv --target yield_strength`.
 
-- [Python 3](https://www.python.org/)
-- [Pandas](https://pandas.pydata.org/) & [NumPy](https://numpy.org/) — Data manipulation and preprocessing
-- [Scikit-Learn](https://scikit-learn.org/) — Standardization, PCA, cross-validation, Machine Learning models, and Self-Training
-- [XGBoost](https://xgboost.readthedocs.io/) — Gradient Boosting algorithms
-- [Matplotlib](https://matplotlib.org/) & [Seaborn](https://seaborn.pydata.org/) — Data visualization and feature importance plots
+## Interpretation
 
----
+Compare models on the **same target and splits**: a temperature error in °C is
+not an energy error in J. Composition signatures are imperfect when rounding
+or missingness differs. Source-prefix grouping is an exploratory sensitivity,
+not a reconstruction of publications. PCA is descriptive and not a predictive
+selection step. Permutation importance is predictive, not causal. Final models
+refitted on all labels have no new independent test score; a new campaign is
+required for external validation.
 
-## 📄 License
+## References
 
-This project was developed for academic and research purposes within the context of the Machine Learning course.
+- [Cambridge MAP_DATA_WELD](https://www.phase-trans.msm.cam.ac.uk/map/data/materials/welddb-b.html).
+- Belkin et al. (2006), [Manifold Regularization](https://www.jmlr.org/papers/v7/belkin06a.html).
+- Rahimi and Recht (2007), [Random Features](https://papers.nips.cc/paper_files/paper/2007/hash/013a006f03dbc5392effeb8f18fda755-Abstract.html).
+- scikit-learn [grouped CV](https://scikit-learn.org/stable/modules/cross_validation.html),
+  [data leakage](https://scikit-learn.org/stable/common_pitfalls.html),
+  [self-training](https://scikit-learn.org/stable/modules/generated/sklearn.semi_supervised.SelfTrainingClassifier.html).
+
+Public data access does not establish a new redistribution licence. The
+original provenance is retained; no new licence is assigned to source data.

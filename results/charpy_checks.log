@@ -1,0 +1,6 @@
+                                     MAE       RMSE        R2
+task                  model                                  
+energy_without_28_100 Forêt    24.850170  34.137251  0.702491
+                      Moyenne  56.816400  65.189711 -0.024075
+temperature_at_100J   Forêt    12.871626  18.481796  0.475562
+                      Moyenne  19.709463  25.782124 -0.008264

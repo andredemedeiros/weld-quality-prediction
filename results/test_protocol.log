@@ -1,0 +1,11 @@
+test_censoring_and_nitrogen (test_protocol.ProtocolTests.test_censoring_and_nitrogen) ... ok
+test_fitted_preprocessing_is_immutable (test_protocol.ProtocolTests.test_fitted_preprocessing_is_immutable) ... ok
+test_group_exclusion_for_all_targets (test_protocol.ProtocolTests.test_group_exclusion_for_all_targets) ... ok
+test_no_graph_no_unlabeled_effect (test_protocol.ProtocolTests.test_no_graph_no_unlabeled_effect) ... ok
+test_no_unlabeled_charpy_with_known_temperature (test_protocol.ProtocolTests.test_no_unlabeled_charpy_with_known_temperature) ... ok
+test_strict_shape_and_targets (test_protocol.ProtocolTests.test_strict_shape_and_targets) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.188s
+
+OK

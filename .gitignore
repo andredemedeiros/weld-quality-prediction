@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+results/models/*.joblib
+results/split_audit.json
+results/oof_predictions.csv
+*.aux
+*.out
+*.toc

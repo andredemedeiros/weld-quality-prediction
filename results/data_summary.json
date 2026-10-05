@@ -1,0 +1,44 @@
+{
+  "rows": 1652,
+  "columns": 44,
+  "composition_groups": 624,
+  "source_families": 135,
+  "exact_duplicate_rows": 0,
+  "sha256": "eb46df81a454c8e549187d87c67a6e72b88676f760e8688a782c832737676ac1",
+  "targets": {
+    "yield_strength": {
+      "observed": 780,
+      "eligible_unlabeled": 872
+    },
+    "tensile_strength": {
+      "observed": 738,
+      "eligible_unlabeled": 914
+    },
+    "elongation": {
+      "observed": 700,
+      "eligible_unlabeled": 952
+    },
+    "reduction_area": {
+      "observed": 705,
+      "eligible_unlabeled": 947
+    },
+    "charpy_energy": {
+      "observed": 879,
+      "eligible_unlabeled": 0
+    },
+    "temperature_100J": {
+      "observed": 356,
+      "eligible_unlabeled": 1296
+    }
+  },
+  "weld_types": {
+    "MMA": 1180,
+    "SA": 265,
+    "FCA": 87,
+    "TSA": 87,
+    "SAW-NG": 18,
+    "GMA-NG": 7,
+    "GMAA": 4,
+    "GTAA": 4
+  }
+}
