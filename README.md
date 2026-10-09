@@ -1,14 +1,14 @@
 # ⚙️ Steel Weld Quality Prediction using Machine Learning
 
-Project developed as part of the **Machine Learning (3IF3010)** course, aiming to analyze, model, and infer patterns determining steel weld quality using **Supervised and Semi-Supervised Machine Learning** approaches.
+Project developed for the **Apprentissage Automatique (3IF3010)** course by André Filipe DE MEDEIROS, El Houssine KAMILI and Nicolò DAL MONTE. It analyses the **Weld Database** and predicts weld quality with **supervised and semi-supervised machine learning**.
 
 ---
 
 ## 📌 Context and Motivation
 
-The integrity and quality of welded joints are critical factors in heavy industry and renewable energy sectors (such as the manufacturing and welding of pipes for wind turbines and offshore structures), involving multi-billion dollar investments. Traditionally, much of the metallurgical knowledge and quality control relies on the empirical experience of experts or costly destructive laboratory mechanical tests.
+The quality of welded joints is critical in heavy industry and renewable energy, for example in the welding of tubes for wind turbines. Knowledge of weld quality still relies largely on the experience of specialists and on costly destructive mechanical tests.
 
-This project applies Data Science and Machine Learning techniques to the **Weld Database** to predict mechanical properties and weld quality based on chemical composition parameters and thermal process variables.
+This project uses the chemical composition and the welding process parameters of the weld metal to predict its mechanical properties. It then compares the models and turns the results into recommendations for good weld quality.
 
 ---
 
@@ -17,9 +17,10 @@ This project applies Data Science and Machine Learning techniques to the **Weld 
 ```plaintext
 ml_base/
 ├── data/
-│   └── welddb.data         # Raw dataset containing welding data (Weld Database)
-├── ML_Project.ipynb        # Jupyter Notebook with the complete ML pipeline and analyses
-├── requirements.txt        # Project dependencies and Python libraries
+│   └── welddb.data         # Raw Weld Database (MAP_DATA_WELD, 1652 rows x 44 columns)
+├── results/                # Cached outputs of Phase 5 (created when the notebook runs)
+├── ML_Project.ipynb        # Complete analysis: EDA, preprocessing, PCA, models, comparison
+├── requirements.txt        # Python dependencies
 └── README.md               # Project documentation
 ```
 
@@ -27,51 +28,94 @@ ml_base/
 
 ## 🔬 Project Pipeline
 
-The study in the [`ML_Project.ipynb`](file:///root/mentionIA/ml_base/ML_Project.ipynb) notebook is structured into the following stages:
+The notebook [`ML_Project.ipynb`](ML_Project.ipynb) has six phases.
 
-### 1. Data Cleaning and Preprocessing
-- Mapping and renaming of over 40 metallurgical, operational, and microstructural attributes.
-- Handling of special characters and missing values ​​(`'N'` $\to$ `NaN`). - Conversion of data types to numerical formats and discarding of variables with a high rate of missing data (> 50%).
+### Phase 1: Exploratory Data Analysis
+- Structure, missing values (encoded as `N`) and non-numeric entries (detection limits such as `<5`, ranges such as `150-200`, labels such as `66totndres`).
+- Distributions, categorical variables, correlations and candidate quality variables.
+- Detection of suspicious repeated Charpy values (356 values of exactly 100 J, 118 of 28 J).
+- Identification of weld groups: several rows are tests of the same weld.
 
-### 2. Exploratory Analysis and Preprocessing
-- Descriptive statistical analysis of process parameters.
-- **Standardization (Z-Score / `StandardScaler`)**: Necessary due to the wide disparity in physical quantities and orders of magnitude (e.g., chemical compositions in `%` or `ppm`, current in `A`, voltage in `V`, heat input in `kJ/mm`, and temperatures in `°C`).
+### Phase 2: Preprocessing
+- **Parsing of non-standard values.** A detection limit `<x` is replaced by half the limit, with unit conversion when it is given in the wrong unit (wt% or ppm). A range is replaced by its midpoint.
+- **Feature selection.** We keep the 30 composition and process columns, which are known before the weld is tested. The 5 columns with more than 80% missing values are dropped, leaving **25 features**. Mechanical properties and microstructure are excluded, because they are results of the weld, not inputs.
+- **Weld groups** (same composition and process) are defined for group cross-validation. Rare weld types are grouped into `Other`.
+- **`ColumnTransformer`, fitted on the training folds only:**
+  - alloying elements: imputed to 0;
+  - other numerical variables: median imputation;
+  - missing indicators added;
+  - categorical variables: one-hot encoded;
+  - **z-score standardisation**.
 
-### 3. Dimensionality Reduction (PCA)
-- Application of **Principal Component Analysis (PCA)** to evaluate cumulative variance and the intrinsic dimensionality of the welding data, identifying the number of components required to represent $\ge 90\%$ of the total variance.
+### Phase 3: Principal Component Analysis
+- The PCA is exploratory only. PC1 is about 20% of the variance (alloy content and heat treatment) and PC2 about 14% (welding energy).
+- 14 of 22 components are needed for 90% of the variance, so the data are not low-dimensional.
+- The components are **not** used as model inputs. The original variables are kept so the results stay interpretable.
 
-### 4. Supervised Learning (Regression)
-- **Models**: *Random Forest Regressor* and *XGBoost Regressor*.
-- **Target**: Charpy impact transition temperature (`Charpy_temp_C`).
-- **Validation**: Rigorous $K$-Fold cross-validation protocol ($K=5$).
-- **Metrics**: Coefficient of Determination ($R^2$) and Root Mean Square Error (RMSE).
+### Phase 4: Quality Variables and Prediction Strategy
+Quality has two dimensions that move in opposite directions, so there are two separate models:
 
-### 5. Semi-Supervised Learning (Classification)
-- **Motivation**: To simulate industrial scenarios where labeled laboratory tests are scarce, while raw process sensor data (unlabeled) is abundant.
-- **Approach**: Binarization of the target into quality classes (*High Quality* vs. *Low Quality*) and application of the **Self-Training** algorithm (`SelfTrainingClassifier` using *Random Forest* as the base estimator and iterative pseudo-labeling based on a confidence threshold). - **Metrics**: Accuracy, Precision, Recall, and F1-Score.
+| Dimension | Targets | Data |
+|---|---|---|
+| **Strength** (main) | `Yield_strength_MPa`, `Ultimate_tensile_strength_MPa`, `Elongation_pct` (multi-output) | 665 welds, 462 independent groups |
+| **Toughness** (secondary) | `Charpy_toughness_J`, with the test temperature `Charpy_temp_C` as an input | 879 tests, 328 groups |
 
-### 6. Variable Importance and Metallurgical Conclusions
-- Extraction of variable importance rankings (*Feature Importances*).
-- Key metallurgical insights:
-- **Chemical Composition**: Elements such as Carbon (`Carbon_C`) and Manganese (`Manganese_Mn`) strongly influence the formation of microstructural phases (martensite vs. bainite), thereby determining impact toughness. 
-- **Thermal Parameters**: A precise balance between heat input (`Heat_input_kJ_mm`) and current (`Current_A`) is required to avoid excessive widening of the Heat-Affected Zone (HAZ).
+### Phase 5: Modelling and Validation
+- **Nested cross-validation with `GroupKFold`:** 5 outer folds produce out-of-fold predictions, and 3 inner folds tune the hyperparameters. Rows of the same weld (or the same `Weld_ID`) never appear in both training and test.
+- **Supervised models:** mean baseline, linear regression, Ridge, KNN, SVR (RBF kernel), decision tree, bagging, random forest and ExtraTrees.
+- **Semi-supervised method (strength only):** a graph-regularised regression (manifold regularisation with a Nyström kernel map) uses the 987 welds without complete strength measurements. It is compared with supervised controls on the same folds.
+- **Sensitivity analysis:** the toughness task is rerun without the 100 J values.
+
+### Phase 6: Comparative Analysis, Conclusion and Recommendations
+- **Metrics:**
+  - RMSE in physical units is the main metric, together with MAE, R², normalised RMSE and bias.
+  - All scores are weighted by weld group, so they estimate the error on a new weld.
+  - Additional baselines: mean per weld type and mean per test temperature.
+- **Uncertainty:** differences between models are checked with a paired bootstrap on the weld groups.
+- **Error analysis:** errors are broken down by weld type.
+- **Interpretation:** permutation importance and partial dependence of the selected models, followed by recommendations.
 
 ---
 
 ## 📊 Key Results
 
-| Approach | Model / Algorithm | Primary Metric | Performance |
-| :--- | :--- | :--- | :--- |
-| **Supervised (Regression)** | Random Forest Regressor | $R^2$ / RMSE | $R^2 \approx 0.78$ \| $\text{RMSE} \approx 13.59$ |
-| **Supervised (Regression)** | XGBoost Regressor | $R^2$ / RMSE | $R^2 \approx 0.79$ \| $\text{RMSE} \approx 13.20$ |
-| **Semi-Supervised** | Self-Training (Random Forest) | Accuracy / F1-Score | Accuracy $\approx 76\%$ \| F1-Score $\approx 0.76$ | ---
+Out-of-fold scores, weighted by weld group:
+
+| Task | Best model | R² | RMSE | MAE |
+| :--- | :--- | :--- | :--- | :--- |
+| Yield strength | SVR (RBF) | 0.78 | 39 MPa | 25 MPa |
+| Tensile strength | SVR (RBF) | 0.88 | 31 MPa | 19 MPa |
+| Elongation | SVR (RBF) | 0.74 | 2.6 % | 1.9 % |
+| Charpy energy | ExtraTrees | 0.73 | 21 J | 12 J |
+| Charpy energy without the 100 J values | ExtraTrees | 0.80 | 22 J | 10 J |
+
+**Model comparison:**
+- **Strength:** SVR is first. ExtraTrees comes second; the gap is small but statistically significant.
+- **Toughness:** ExtraTrees and random forest are practically equivalent.
+- **Linear models and the single tree:** clearly worse. On the Charpy task the linear models extrapolate badly on a family of welds with extreme sulphur and phosphorus contents.
+- **Semi-supervised graph regression:** no measurable gain over its supervised control. The unlabeled welds neither help nor hurt.
+
+**Limits:** errors are 2 to 3 times larger for rare weld types than for MMA welds, which make up about 72% of the strength data. Predictions are only reliable within the range of the database.
+
+**Main factors and recommendations:**
+- **Strength:** increases with the alloying elements (Cr, Mn, Nb, V, Mo, Ni, C), at the expense of elongation (strength/ductility trade-off).
+- **Toughness:** dominated by the test temperature. It decreases with Mo, Cr, P and O.
+- **Recommendations:**
+  - Treat quality as a strength/toughness compromise.
+  - Obtain strength with moderate, combined alloying.
+  - Keep impurities (P, S) and oxygen low.
+  - Specify the Charpy test at the service temperature.
+  - Use the models for screening, with a margin of one RMSE and a warning outside the domain of the data, not as a substitute for testing.
+
+These are associations learned from historical data, not causal effects. They should be confirmed by designed welding trials.
+
+---
 
 ## 🚀 How to Run the Project
 
 ### Prerequisites
 - Python 3.10 or higher
-- `pip` package manager
-- Virtual environment (`venv` recommended)
+- `pip`, and a virtual environment (`venv` recommended)
 
 ### Step-by-Step
 
@@ -84,30 +128,38 @@ cd ml_base
 2. **Create and activate a virtual environment:**
 ```bash
 python3 -m venv .venv
-source .venv/bin/activate # Linux / macOS
+source .venv/bin/activate  # Linux / macOS
 # On Windows: .venv\Scripts\activate
 ```
 
-3. **Install dependencies:**
+3. **Install the dependencies:**
 ```bash
 pip install -r requirements.txt
 ```
 
-4. **Launch Jupyter Notebook / JupyterLab:**
+4. **Open the notebook** in VS Code or PyCharm (Jupyter extension, using the `.venv` kernel), or with Jupyter:
 ```bash
+pip install notebook
 jupyter notebook ML_Project.ipynb
 ```
-*Or open the file directly in your preferred editor (such as VS Code or PyCharm with the Jupyter extension).*
+
+The full Phase 5 computation takes about 4 minutes. Its outputs are saved in `results/` and reloaded on later runs, as long as the protocol has not changed. Set `RECOMPUTE = True` in section 5.7 to force a new run.
 
 ---
 
 ## 📦 Key Technologies and Libraries
 
 - [Python 3](https://www.python.org/)
-- [Pandas](https://pandas.pydata.org/) & [NumPy](https://numpy.org/) — Data manipulation and preprocessing
-- [Scikit-Learn](https://scikit-learn.org/) — Standardization, PCA, cross-validation, Machine Learning models, and Self-Training
-- [XGBoost](https://xgboost.readthedocs.io/) — Gradient Boosting algorithms
-- [Matplotlib](https://matplotlib.org/) & [Seaborn](https://seaborn.pydata.org/) — Data visualization and feature importance plots
+- [pandas](https://pandas.pydata.org/) & [NumPy](https://numpy.org/): data manipulation
+- [scikit-learn](https://scikit-learn.org/): preprocessing pipelines, PCA, group cross-validation, models, permutation importance
+- [SciPy](https://scipy.org/): sparse graph and linear algebra of the semi-supervised method
+- [Matplotlib](https://matplotlib.org/) & [Seaborn](https://seaborn.pydata.org/): visualisation
+
+---
+
+## 📚 Data Source
+
+Cool, T. and Bhadeshia, H. K. D. H. *MAP Data Library — MAP_DATA_WELD*. [Documentation](https://www.phase-trans.msm.cam.ac.uk/map/data/materials/welddb-b.html). The full bibliography (semi-supervised learning, interpretation tools, bootstrap) is at the end of the notebook.
 
 ---
 

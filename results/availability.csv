@@ -1,0 +1,4 @@
+task,n_labeled,n_validation_groups,n_original_groups,n_unlabeled_eligible,n_features
+strength,665,462,465,987,25
+charpy,879,328,328,0,26
+charpy_without_100,523,200,200,0,26

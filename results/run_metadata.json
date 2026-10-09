@@ -1,0 +1,103 @@
+{
+  "status": "complete",
+  "protocol": {
+    "version": 2,
+    "outer_folds": 5,
+    "inner_folds": 3,
+    "seed": 42,
+    "group_column": "Validation_Group",
+    "grids": {
+      "Dummy_mean": {},
+      "OLS": {},
+      "Ridge": {
+        "alpha": [
+          0.1,
+          1,
+          10,
+          100,
+          1000
+        ]
+      },
+      "KNN": {
+        "n_neighbors": [
+          3,
+          7,
+          15
+        ],
+        "weights": [
+          "uniform",
+          "distance"
+        ]
+      },
+      "SVR_RBF": {
+        "estimator__C": [
+          1,
+          10,
+          100
+        ],
+        "estimator__epsilon": [
+          0.05,
+          0.2
+        ]
+      },
+      "DecisionTree": {
+        "max_depth": [
+          3,
+          6,
+          null
+        ],
+        "min_samples_leaf": [
+          2,
+          8
+        ]
+      },
+      "Bagging": {
+        "max_samples": [
+          0.6,
+          1.0
+        ],
+        "estimator__max_depth": [
+          6,
+          null
+        ]
+      },
+      "RandomForest": {
+        "max_features": [
+          0.5,
+          1.0
+        ],
+        "min_samples_leaf": [
+          2,
+          8
+        ]
+      },
+      "ExtraTrees": {
+        "max_features": [
+          0.5,
+          1.0
+        ],
+        "min_samples_leaf": [
+          2,
+          8
+        ]
+      }
+    },
+    "graph_alphas": [
+      1e-05,
+      0.0001,
+      0.001,
+      0.01,
+      0.1
+    ],
+    "graph_lambdas": [
+      0.01,
+      0.1,
+      1.0
+    ]
+  },
+  "python": "3.12.3",
+  "numpy": "2.5.3",
+  "pandas": "3.0.6",
+  "scikit_learn": "1.9.1",
+  "total_seconds": 241.75420628100073
+}
