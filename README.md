@@ -157,9 +157,39 @@ The full Phase 5 computation takes about 4 minutes. Its outputs are saved in `re
 
 ---
 
-## 📚 Data Source
+### Articles and books
 
-Cool, T. and Bhadeshia, H. K. D. H. *MAP Data Library — MAP_DATA_WELD*. [Documentation](https://www.phase-trans.msm.cam.ac.uk/map/data/materials/welddb-b.html). The full bibliography (semi-supervised learning, interpretation tools, bootstrap) is at the end of the notebook.
+**[B1]** Belkin, M., Niyogi, P. and Sindhwani, V. (2006). *Manifold Regularization: A Geometric Framework for Learning from Labeled and Unlabeled Examples*. Journal of Machine Learning Research, 7, 2399–2434. [Article and PDF](https://www.jmlr.org/papers/v7/belkin06a.html), in particular sections 2 and 4.2.
+
+The article combines a supervised risk with a geometric regularisation built from labeled and unlabeled inputs. Its extension to new observations motivates our inductive choice. Our implementation uses an explicit Nyström map and a quadratic penalty on its coefficients: it is a finite-dimensional adaptation, not an exact reproduction of LapRLS in a full RKHS. The rank, the kernel and the normalisation of the Laplacian are stated in the notebook.
+
+**[B2]** Zhu, X., Ghahramani, Z. and Lafferty, J. (2003). *Semi-Supervised Learning Using Gaussian Fields and Harmonic Functions*. Proceedings of ICML, 912–919. [Authors' PDF](https://mlg.eng.cam.ac.uk/pub/pdf/ZhuGhaLaf03a.pdf).
+
+This work justifies representing similarities with a graph and looking for functions that vary little along its edges. Pure propagation on a graph is the conceptual starting point; we keep a prediction function so that new welds, excluded from the training graph, can be evaluated.
+
+**[B3]** van Engelen, J. E. and Hoos, H. H. (2020). *A survey on semi-supervised learning*. Machine Learning, 109, 373–440. [DOI](https://doi.org/10.1007/s10994-019-05855-6), [authors' PDF](https://ada.liacs.nl/papers/EngHoo19.pdf). Sections 4.1, 8.1 and 9.
+
+The survey situates self-training, co-training and graph methods. Its section on regression notes that the real-valued functions of graph methods apply directly. Pseudo-labelling would require a confidence criterion for continuous outputs; the graph avoids introducing one. Unlabeled data can degrade the performance when the assumptions fail, which is why the evaluation includes supervised controls. COREG (Zhou and Li, 2005) is an alternative identified in this survey, not implemented here.
+
+**[B4]** Breiman, L. (2001). *Random Forests*. Machine Learning, 45(1), 5–32. [DOI](https://doi.org/10.1023/A:1010933404324). Origin of the random forest and of the permutation importance used in section 6.8.
+
+**[B5]** Friedman, J. H. (2001). *Greedy function approximation: a gradient boosting machine*. Annals of Statistics, 29(5), 1189–1232. [DOI](https://doi.org/10.1214/aos/1013203451). Introduces the partial dependence plots used in section 6.8.
+
+**[B6]** Geurts, P., Ernst, D. and Wehenkel, L. (2006). *Extremely randomized trees*. Machine Learning, 63(1), 3–42. [DOI](https://doi.org/10.1007/s10994-006-6226-1). The ExtraTrees model of Phase 5.
+
+**[B7]** Efron, B. and Tibshirani, R. J. (1993). *An Introduction to the Bootstrap*. Chapman & Hall. Percentile bootstrap intervals used in section 6.3 (here resampling whole weld groups).
+
+### Data and documentation
+
+**[D1]** Cool, T. and Bhadeshia, H. K. D. H. *MAP Data Library — MAP_DATA_WELD*. [Original documentation](https://www.phase-trans.msm.cam.ac.uk/map/data/materials/welddb-b.html). Definition of the 44 columns, units, bibliographic origin and meaning of `N`. The document does not flag 100 J or 28 J as default values.
+
+**[D2]** scikit-learn. [Cross-validation](https://scikit-learn.org/stable/modules/cross_validation.html) and [nested cross-validation example](https://scikit-learn.org/stable/auto_examples/model_selection/plot_nested_cross_validation_iris.html). Separation between selection and evaluation, and splits by groups.
+
+**[D3]** scikit-learn. [Semi-supervised learning](https://scikit-learn.org/stable/modules/semi_supervised.html). `SelfTrainingClassifier`, `LabelPropagation` and `LabelSpreading` are classification tools, not applicable directly to our continuous outputs.
+
+**[D4]** scikit-learn. [Kernel approximation](https://scikit-learn.org/stable/modules/kernel_approximation.html). The Nyström map gives a finite-dimensional kernel representation that can also transform new observations.
+
+**[D5]** scikit-learn. [Permutation feature importance](https://scikit-learn.org/stable/modules/permutation_importance.html) and [partial dependence](https://scikit-learn.org/stable/modules/partial_dependence.html). Definitions and limits (correlated features, extrapolation) of the tools of section 6.8.
 
 ---
 
